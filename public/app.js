@@ -359,7 +359,7 @@ function removeJsonRecord(recordId, type) {
 function updateTime() {
   const now = new Date();
   localTimeEl.textContent = formatLocalDateTime(now);
-  utcTimeEl.textContent = now.toUTCString();
+  utcTimeEl.textContent = formatUtcDateTime(now);
   secondsEl.textContent = String(Math.floor(now.getTime() / 1000));
   millisecondsEl.textContent = String(now.getTime());
 }
@@ -398,6 +398,16 @@ function formatLocalDateTime(date) {
   const hour = String(date.getHours()).padStart(2, "0");
   const minute = String(date.getMinutes()).padStart(2, "0");
   const second = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
+function formatUtcDateTime(date) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hour = String(date.getUTCHours()).padStart(2, "0");
+  const minute = String(date.getUTCMinutes()).padStart(2, "0");
+  const second = String(date.getUTCSeconds()).padStart(2, "0");
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
@@ -631,7 +641,7 @@ convertTimestampButton.addEventListener("click", () => {
     const { unit, date } = detectTimestampUnit(rawValue);
     timestampUnitEl.textContent = unit;
     timestampLocalResultEl.textContent = formatLocalDateTime(date);
-    timestampUtcResultEl.textContent = date.toUTCString();
+    timestampUtcResultEl.textContent = formatUtcDateTime(date);
     setMessage(timestampConvertMessageEl, `转换成功，输入单位识别为${unit}。`, "success");
   } catch (error) {
     timestampUnitEl.textContent = "--";
