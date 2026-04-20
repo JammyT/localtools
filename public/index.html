@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LocalTools</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">LOCAL FRONTEND SERVICE</p>
+          <h1>本地开发常用工具台</h1>
+          <p class="hero-text">
+            在本地浏览器中集中处理 JSON 格式化与折叠查看、JSON String 转对象、时间与时间戳互转、URL 编码解码，并保留输入记录、历史记录和收藏内容。
+          </p>
+        </div>
+      </header>
+
+      <main class="grid">
+        <div class="tabs">
+          <div class="tab-bar" role="tablist" aria-label="工具切换">
+            <button
+              id="tab-json-format"
+              class="tab-button active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-json-format"
+            >
+              JSON 格式化
+            </button>
+            <button
+              id="tab-json-string"
+              class="tab-button"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-json-string"
+            >
+              JSON String 转对象
+            </button>
+            <button
+              id="tab-time"
+              class="tab-button"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-time"
+            >
+              时间转换
+            </button>
+            <button
+              id="tab-url"
+              class="tab-button"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-url"
+            >
+              URL 编码/解码
+            </button>
+          </div>
+
+          <section
+            id="panel-json-format"
+            class="tab-panel active"
+            role="tabpanel"
+            aria-labelledby="tab-json-format"
+          >
+            <section class="panel tool-panel full-width">
+              <div class="panel-header">
+                <h2>JSON 格式化</h2>
+              </div>
+              <div class="split-layout">
+                <div class="split-column">
+                  <label class="input-label" for="json-input">输入 JSON 或 JSON 字符串</label>
+                  <textarea
+                    id="json-input"
+                    class="editor"
+                    spellcheck="false"
+                    placeholder='示例: {"name":"jammy","skills":["json","time"]}'
+                  ></textarea>
+                </div>
+                <div class="split-column">
+                  <label class="input-label" for="json-output-tree">格式化结果</label>
+                  <div id="json-output-tree" class="json-tree output" aria-live="polite">
+                    格式化后的 JSON 会显示在这里
+                  </div>
+                </div>
+              </div>
+              <div class="actions">
+                <button id="format-json" class="button primary">格式化 JSON</button>
+                <button id="favorite-json" class="button secondary">加入收藏</button>
+                <button id="clear-json" class="button secondary">清空</button>
+              </div>
+              <p id="format-message" class="message" aria-live="polite"></p>
+            </section>
+
+            <section class="panel tool-panel">
+              <div class="panel-header">
+                <h2>历史记录</h2>
+                <button id="clear-json-history" class="button ghost" type="button">清空历史</button>
+              </div>
+              <p class="input-label">自动保留最近 20 条格式化成功的内容</p>
+              <div id="json-history-list" class="record-list empty">暂无历史记录</div>
+            </section>
+
+            <section class="panel tool-panel">
+              <div class="panel-header">
+                <h2>收藏</h2>
+              </div>
+              <p class="input-label">手动收藏的重要 JSON，长期保留在本地</p>
+              <div id="json-favorites-list" class="record-list empty">暂无收藏内容</div>
+            </section>
+          </section>
+
+          <section
+            id="panel-json-string"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-json-string"
+            hidden
+          >
+            <section class="panel tool-panel full-width">
+              <div class="panel-header">
+                <h2>JSON String 转对象</h2>
+              </div>
+              <div class="split-layout">
+                <div class="split-column">
+                  <label class="input-label" for="json-string-input">输入 JSON 字符串</label>
+                  <textarea
+                    id="json-string-input"
+                    class="editor"
+                    spellcheck="false"
+                    placeholder='示例: "{\"name\":\"jammy\",\"enabled\":true}"'
+                  ></textarea>
+                </div>
+                <div class="split-column">
+                  <label class="input-label" for="json-object-output">对象预览</label>
+                  <pre id="json-object-output" class="object-view">{}</pre>
+                </div>
+              </div>
+              <div class="actions">
+                <button id="parse-string" class="button primary">转换为对象</button>
+                <button id="copy-object" class="button secondary">复制结果</button>
+              </div>
+              <p id="parse-message" class="message" aria-live="polite"></p>
+            </section>
+          </section>
+
+          <section id="panel-time" class="tab-panel" role="tabpanel" aria-labelledby="tab-time" hidden>
+            <section class="panel time-panel">
+              <div class="panel-header">
+                <h2>当前时间</h2>
+                <span class="tag live">LIVE</span>
+              </div>
+              <div class="time-cards">
+                <article class="time-card">
+                  <p class="label">本地时间</p>
+                  <p id="local-time" class="value">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">UTC 时间</p>
+                  <p id="utc-time" class="value">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">秒级时间戳</p>
+                  <p id="timestamp-seconds" class="value">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">毫秒级时间戳</p>
+                  <p id="timestamp-milliseconds" class="value">--</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel tool-panel full-width">
+              <div class="panel-header">
+                <h2>时间戳转时间</h2>
+              </div>
+              <label class="input-label" for="timestamp-input">输入时间戳</label>
+              <textarea
+                id="timestamp-input"
+                class="editor compact"
+                spellcheck="false"
+                placeholder="示例: 1713600000 或 1713600000000"
+              ></textarea>
+              <div class="actions">
+                <button id="convert-timestamp" class="button primary">转换时间戳</button>
+                <button id="clear-timestamp" class="button secondary">清空</button>
+              </div>
+              <p id="timestamp-convert-message" class="message" aria-live="polite"></p>
+              <div class="time-convert-grid">
+                <article class="time-card">
+                  <p class="label">识别出的输入单位</p>
+                  <p id="timestamp-unit" class="value">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">本地时间</p>
+                  <p id="timestamp-local-result" class="value convert-result">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">UTC 时间</p>
+                  <p id="timestamp-utc-result" class="value convert-result">--</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel tool-panel full-width">
+              <div class="panel-header">
+                <h2>时间转时间戳</h2>
+              </div>
+              <div class="split-layout">
+                <div class="split-column">
+                  <label class="input-label" for="local-datetime-input">输入本地时间</label>
+                  <textarea
+                    id="local-datetime-input"
+                    class="editor compact"
+                    spellcheck="false"
+                    placeholder="示例: 2026-04-20 18:30:00"
+                  ></textarea>
+                </div>
+                <div class="split-column">
+                  <label class="input-label" for="utc-datetime-input">输入 UTC 时间</label>
+                  <textarea
+                    id="utc-datetime-input"
+                    class="editor compact"
+                    spellcheck="false"
+                    placeholder="示例: 2026-04-20T10:30:00Z"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="actions">
+                <button id="convert-datetime" class="button primary">转换为时间戳</button>
+                <button id="clear-datetime" class="button secondary">清空</button>
+              </div>
+              <p id="datetime-convert-message" class="message" aria-live="polite"></p>
+              <div class="time-convert-grid">
+                <article class="time-card">
+                  <p class="label">使用的输入类型</p>
+                  <p id="datetime-source" class="value">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">秒级时间戳</p>
+                  <p id="datetime-seconds-result" class="value convert-result">--</p>
+                </article>
+                <article class="time-card">
+                  <p class="label">毫秒级时间戳</p>
+                  <p id="datetime-milliseconds-result" class="value convert-result">--</p>
+                </article>
+              </div>
+            </section>
+          </section>
+
+          <section id="panel-url" class="tab-panel" role="tabpanel" aria-labelledby="tab-url" hidden>
+            <section class="panel tool-panel full-width">
+              <div class="panel-header">
+                <h2>URL Encoding / Decoding</h2>
+              </div>
+              <div class="split-layout">
+                <div class="split-column">
+                  <label class="input-label" for="url-input">输入内容</label>
+                  <textarea
+                    id="url-input"
+                    class="editor"
+                    spellcheck="false"
+                    placeholder="示例: https://example.com/search?q=hello world&lang=zh-CN"
+                  ></textarea>
+                </div>
+                <div class="split-column">
+                  <label class="input-label" for="url-output">转换结果</label>
+                  <textarea
+                    id="url-output"
+                    class="editor output"
+                    spellcheck="false"
+                    readonly
+                    placeholder="编码或解码后的结果会显示在这里"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="actions">
+                <button id="encode-url" class="button primary">URL Encode</button>
+                <button id="decode-url" class="button primary">URL Decode</button>
+                <button id="clear-url" class="button secondary">清空</button>
+              </div>
+              <p id="url-message" class="message" aria-live="polite"></p>
+            </section>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

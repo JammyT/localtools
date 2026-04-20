@@ -1,0 +1,9 @@
+{
+  "name": "localtools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local frontend service for JSON tools and time utilities.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
