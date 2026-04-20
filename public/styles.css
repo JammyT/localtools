@@ -184,6 +184,10 @@ h1 {
   border: 1px solid rgba(55, 71, 51, 0.1);
 }
 
+.time-card .label {
+  padding-right: 64px;
+}
+
 .card-copy-button {
   position: absolute;
   top: 14px;
@@ -225,7 +229,6 @@ h1 {
 
 .value {
   margin-top: 10px;
-  padding-right: 64px;
   font-size: clamp(18px, 2vw, 28px);
   line-height: 1.35;
   word-break: break-word;
