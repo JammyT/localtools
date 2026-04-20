@@ -62,6 +62,26 @@ let formattedJsonValue = null;
 let formattedJsonText = "";
 const collapsedJsonPaths = new Set();
 
+async function copyTextToClipboard(text) {
+  await navigator.clipboard.writeText(text);
+}
+
+function flashCopyButtonState(button, text, className) {
+  const originalLabel = button.dataset.originalLabel || button.textContent || "复制";
+  button.dataset.originalLabel = originalLabel;
+  button.textContent = text;
+  button.classList.toggle("copied", className === "copied");
+
+  window.clearTimeout(Number(button.dataset.resetTimerId || 0));
+  const timerId = window.setTimeout(() => {
+    button.textContent = originalLabel;
+    button.classList.remove("copied");
+    delete button.dataset.resetTimerId;
+  }, 1400);
+
+  button.dataset.resetTimerId = String(timerId);
+}
+
 function setMessage(element, text, type) {
   element.textContent = text;
   element.className = "message";
@@ -558,10 +578,45 @@ copyButton.addEventListener("click", async () => {
   }
 
   try {
-    await navigator.clipboard.writeText(content);
+    await copyTextToClipboard(content);
     setMessage(parseMessageEl, "对象结果已复制。", "success");
   } catch (error) {
     setMessage(parseMessageEl, "复制失败，请手动复制。", "error");
+  }
+});
+
+panelTime.addEventListener("click", async (event) => {
+  const target = event.target;
+
+  if (!(target instanceof HTMLButtonElement)) {
+    return;
+  }
+
+  const { copyTarget } = target.dataset;
+
+  if (!copyTarget) {
+    return;
+  }
+
+  const valueEl = document.getElementById(copyTarget);
+
+  if (!valueEl) {
+    flashCopyButtonState(target, "失败", "");
+    return;
+  }
+
+  const content = valueEl.textContent ? valueEl.textContent.trim() : "";
+
+  if (!content || content === "--") {
+    flashCopyButtonState(target, "无内容", "");
+    return;
+  }
+
+  try {
+    await copyTextToClipboard(content);
+    flashCopyButtonState(target, "已复制", "copied");
+  } catch (error) {
+    flashCopyButtonState(target, "失败", "");
   }
 });
 

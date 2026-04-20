@@ -177,10 +177,39 @@ h1 {
 }
 
 .time-card {
+  position: relative;
   padding: 18px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.66);
   border: 1px solid rgba(55, 71, 51, 0.1);
+}
+
+.card-copy-button {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  appearance: none;
+  border: 1px solid rgba(55, 71, 51, 0.12);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.card-copy-button:hover {
+  transform: translateY(-1px);
+  background: rgba(227, 212, 184, 0.88);
+  color: var(--text);
+}
+
+.card-copy-button.copied {
+  background: rgba(34, 119, 90, 0.12);
+  color: var(--success);
 }
 
 .time-convert-grid {
@@ -196,6 +225,7 @@ h1 {
 
 .value {
   margin-top: 10px;
+  padding-right: 64px;
   font-size: clamp(18px, 2vw, 28px);
   line-height: 1.35;
   word-break: break-word;
