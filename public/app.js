@@ -15,7 +15,9 @@ const datetimeMillisecondsResultEl = document.getElementById("datetime-milliseco
 const datetimeConvertMessageEl = document.getElementById("datetime-convert-message");
 
 const jsonInputEl = document.getElementById("json-input");
+const jsonOutputShellEl = document.getElementById("json-output-shell");
 const jsonOutputTreeEl = document.getElementById("json-output-tree");
+const toggleJsonFullscreenButton = document.getElementById("toggle-json-fullscreen");
 const formatMessageEl = document.getElementById("format-message");
 const jsonHistoryListEl = document.getElementById("json-history-list");
 const jsonFavoritesListEl = document.getElementById("json-favorites-list");
@@ -242,6 +244,56 @@ function clearFormattedJsonOutput() {
   formattedJsonText = "";
   collapsedJsonPaths.clear();
   renderFormattedJsonTree();
+}
+
+function isJsonOutputFullscreen() {
+  return document.fullscreenElement === jsonOutputShellEl
+    || jsonOutputShellEl.classList.contains("is-fullscreen-fallback");
+}
+
+function syncJsonFullscreenState() {
+  const isFullscreen = isJsonOutputFullscreen();
+  toggleJsonFullscreenButton.textContent = isFullscreen ? "收起全屏" : "全屏显示";
+  toggleJsonFullscreenButton.setAttribute("aria-expanded", String(isFullscreen));
+  toggleJsonFullscreenButton.setAttribute("aria-label", isFullscreen ? "收起全屏显示" : "全屏显示格式化结果");
+  document.body.classList.toggle("json-fullscreen-active", isFullscreen);
+}
+
+function enterJsonOutputFallbackFullscreen() {
+  jsonOutputShellEl.classList.add("is-fullscreen-fallback");
+  syncJsonFullscreenState();
+}
+
+function exitJsonOutputFallbackFullscreen() {
+  jsonOutputShellEl.classList.remove("is-fullscreen-fallback");
+  syncJsonFullscreenState();
+}
+
+async function toggleJsonOutputFullscreen() {
+  const isNativeFullscreen = document.fullscreenElement === jsonOutputShellEl;
+
+  if (isNativeFullscreen) {
+    await document.exitFullscreen();
+    return;
+  }
+
+  if (jsonOutputShellEl.classList.contains("is-fullscreen-fallback")) {
+    exitJsonOutputFallbackFullscreen();
+    return;
+  }
+
+  if (typeof jsonOutputShellEl.requestFullscreen === "function") {
+    try {
+      await jsonOutputShellEl.requestFullscreen();
+      syncJsonFullscreenState();
+      return;
+    } catch (error) {
+      enterJsonOutputFallbackFullscreen();
+      return;
+    }
+  }
+
+  enterJsonOutputFallbackFullscreen();
 }
 
 function renderRecordList(container, records, emptyText, type) {
@@ -797,6 +849,30 @@ jsonOutputTreeEl.addEventListener("click", (event) => {
   renderFormattedJsonTree();
 });
 
+toggleJsonFullscreenButton.addEventListener("click", async () => {
+  try {
+    await toggleJsonOutputFullscreen();
+  } catch (error) {
+    enterJsonOutputFallbackFullscreen();
+  }
+});
+
+document.addEventListener("fullscreenchange", () => {
+  if (document.fullscreenElement && document.fullscreenElement !== jsonOutputShellEl) {
+    return;
+  }
+
+  syncJsonFullscreenState();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !jsonOutputShellEl.classList.contains("is-fullscreen-fallback")) {
+    return;
+  }
+
+  exitJsonOutputFallbackFullscreen();
+});
+
 tabJsonFormatButton.addEventListener("click", () => activateTab("json-format"));
 tabJsonStringButton.addEventListener("click", () => activateTab("json-string"));
 tabTimeButton.addEventListener("click", () => activateTab("time"));
@@ -806,6 +882,7 @@ restorePersistedInputs();
 restoreJsonFormatRecords();
 activateTab("json-format");
 clearFormattedJsonOutput();
+syncJsonFullscreenState();
 resetTimestampConversion();
 resetDatetimeConversion();
 resetUrlTool();

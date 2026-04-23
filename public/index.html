@@ -74,9 +74,22 @@
                   ></textarea>
                 </div>
                 <div class="split-column">
-                  <label class="input-label" for="json-output-tree">格式化结果</label>
-                  <div id="json-output-tree" class="json-tree output" aria-live="polite">
-                    格式化后的 JSON 会显示在这里
+                  <div class="output-header">
+                    <label class="input-label" for="json-output-tree">格式化结果</label>
+                    <button
+                      id="toggle-json-fullscreen"
+                      class="button ghost icon-button"
+                      type="button"
+                      aria-controls="json-output-shell"
+                      aria-expanded="false"
+                    >
+                      全屏显示
+                    </button>
+                  </div>
+                  <div id="json-output-shell" class="json-output-shell">
+                    <div id="json-output-tree" class="json-tree output" aria-live="polite">
+                      格式化后的 JSON 会显示在这里
+                    </div>
                   </div>
                 </div>
               </div>

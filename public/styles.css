@@ -245,6 +245,53 @@ h1 {
   color: var(--muted);
 }
 
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.output-header .input-label {
+  margin-bottom: 0;
+}
+
+.json-output-shell {
+  position: relative;
+}
+
+.json-output-shell:fullscreen {
+  display: flex;
+  padding: 20px;
+  background: rgba(245, 239, 228, 0.98);
+}
+
+.json-output-shell:fullscreen .json-tree {
+  min-height: auto;
+  height: 100%;
+}
+
+.json-output-shell.is-fullscreen-fallback {
+  position: fixed;
+  inset: 20px;
+  z-index: 999;
+  display: flex;
+  padding: 20px;
+  border-radius: 24px;
+  background: rgba(245, 239, 228, 0.96);
+  box-shadow: 0 24px 80px rgba(31, 42, 29, 0.28);
+}
+
+.json-output-shell.is-fullscreen-fallback .json-tree {
+  min-height: auto;
+  height: 100%;
+}
+
+body.json-fullscreen-active {
+  overflow: hidden;
+}
+
 .editor,
 .object-view,
 .json-tree {
@@ -343,6 +390,11 @@ h1 {
   font: inherit;
   cursor: pointer;
   transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+}
+
+.icon-button {
+  padding: 10px 14px;
+  white-space: nowrap;
 }
 
 .button:hover {
@@ -486,5 +538,20 @@ h1 {
 
   .actions {
     flex-direction: column;
+  }
+
+  .output-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .icon-button {
+    width: 100%;
+  }
+
+  .json-output-shell.is-fullscreen-fallback {
+    inset: 10px;
+    padding: 12px;
+    border-radius: 18px;
   }
 }
