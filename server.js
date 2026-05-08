@@ -1,9 +1,10 @@
 const http = require("http");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
-const host = "127.0.0.1";
-const port = 3000;
+const host = process.env.HOST || "0.0.0.0";
+const port = Number(process.env.PORT) || 3000;
 const publicDir = path.join(__dirname, "public");
 
 const mimeTypes = {
@@ -32,6 +33,21 @@ function sendFile(res, filePath) {
   });
 }
 
+function getLanUrls() {
+  const networkInterfaces = os.networkInterfaces();
+  const urls = [];
+
+  Object.values(networkInterfaces).forEach((addresses) => {
+    (addresses || []).forEach((address) => {
+      if (address.family === "IPv4" && !address.internal) {
+        urls.push(`http://${address.address}:${port}`);
+      }
+    });
+  });
+
+  return urls;
+}
+
 const server = http.createServer((req, res) => {
   const urlPath = req.url === "/" ? "/index.html" : req.url;
   const safePath = path.normalize(urlPath).replace(/^(\.\.[/\\])+/, "");
@@ -55,5 +71,10 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`LocalTools running at http://${host}:${port}`);
+  console.log("LocalTools running at:");
+  console.log(`- Local:   http://127.0.0.1:${port}`);
+
+  getLanUrls().forEach((url) => {
+    console.log(`- Network: ${url}`);
+  });
 });
