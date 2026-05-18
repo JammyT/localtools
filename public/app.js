@@ -65,7 +65,35 @@ let formattedJsonText = "";
 const collapsedJsonPaths = new Set();
 
 async function copyTextToClipboard(text) {
-  await navigator.clipboard.writeText(text);
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (error) {
+      // Fall back for browsers that expose Clipboard API but deny write access.
+    }
+  }
+
+  const textareaEl = document.createElement("textarea");
+  textareaEl.value = text;
+  textareaEl.setAttribute("readonly", "");
+  textareaEl.style.position = "fixed";
+  textareaEl.style.top = "-9999px";
+  textareaEl.style.left = "-9999px";
+  document.body.appendChild(textareaEl);
+  textareaEl.focus();
+  textareaEl.select();
+  textareaEl.setSelectionRange(0, text.length);
+
+  try {
+    const copied = document.execCommand("copy");
+
+    if (!copied) {
+      throw new Error("Copy command was rejected.");
+    }
+  } finally {
+    textareaEl.remove();
+  }
 }
 
 function flashCopyButtonState(button, text, className) {
